@@ -9,9 +9,13 @@ class Tester
         $this->SOLUTION_CLASS = $solution;
     }
 
-    public function test(string $tests_dir)
+    public function test(string $tests_dir, int $one_test = 0)
     {
         $test_inputs = glob($tests_dir . '/*.dat');
+
+        if ($one_test > 0) {
+            $test_inputs = [$test_inputs[$one_test - 1]];
+        }
 
         foreach ($test_inputs as $file) {
             $ans_file = str_replace('.dat', '.ans', $file);
@@ -21,8 +25,8 @@ class Tester
 
                 if (count($test_answer) == 1) {
                     $test_answer = $test_answer[0];
-                } 
-
+                }
+                
                 if ($solution_answer == $test_answer) {
                     echo "+ Test " . pathinfo($file, PATHINFO_FILENAME) . " passed.";
                 } else {
