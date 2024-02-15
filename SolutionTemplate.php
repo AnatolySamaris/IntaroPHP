@@ -1,10 +1,6 @@
 <?php
 
-try {
-    require(__DIR__.'\..\Tester.php');
-} catch (Throwable $e) {
-    require(__DIR__.'/../Tester.php');
-}
+require(__DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'Tester.php');
 
 
 class Solution

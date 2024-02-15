@@ -1,15 +1,11 @@
 <?php
 
-try {
-    require(__DIR__.'\..\Tester.php');
-} catch (Throwable $e) {
-    require(__DIR__.'/../Tester.php');
-}
+require(__DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'Tester.php');
 
 
 // Складываем победившие ставки, умноженные на соответствующие коэффициенты,
 // и вычитаем сумму поставленных денег.
-class Solution
+class Solution 
 {
     public $TESTS_DIR = 'тесты/';
     public $TEST_PATH;
