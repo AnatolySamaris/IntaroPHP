@@ -1,0 +1,94 @@
+-- CREATING TABLES
+CREATE TABLE users (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(100) NOT NULL,
+  email VARCHAR(100) NOT NULL,
+  phone VARCHAR(15) NOT NULL,
+  address TEXT NOT NULL
+);
+
+CREATE TABLE products (
+  id SERIAL PRIMARY KEY,
+  title VARCHAR(100) NOT NULL,
+  description TEXT NOT NULL,
+  cost NUMERIC(10, 2) NOT NULL
+);
+
+CREATE TABLE orders (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER NOT NULL,
+  status VARCHAR(20) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  total_cost NUMERIC(10, 2) NOT NULL,
+  FOREIGN KEY (user_id) REFERENCES users (id)
+    ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE order_products (
+  product_id INTEGER NOT NULL,
+  order_id INTEGER NOT NULL,
+  amount INTEGER NOT NULL,
+  FOREIGN KEY (product_id) REFERENCES products (id)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY (order_id) REFERENCES orders (id)
+    ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+
+-- INSERTING VALUES
+INSERT INTO users (name, email, phone, address)
+  VALUES ('Иван', 'ivan@mail.com', '81234567890', 'address1'),
+          ('Григорий', 'grishanagibator@gmail.com', '89001001020', 'addrr2'),
+          ('Михаил', 'mihaelSOBAKA@yandex.ru', '81231231212', 'mishaAddress');
+
+INSERT INTO products (title, description, cost)
+  VALUES ('Ручка', 'Прям синяя ручка', 50.00),
+          ('Карандаш', 'Простой карандаш HB', 20.00),
+          ('Тетрадь', 'Тетрадь 24 листа', 10.00),
+          ('Сосиска в тесте', 'Еда богов. Бесценно.', 100.00),
+          ('Курсач', 'Опять откладывал до последнего', 10000.00);
+
+
+INSERT INTO orders (user_id, status, total_cost)
+  VALUES (1, 'В процессе', 10100.00),
+          (1, 'Оплачен', 130.00),
+          (2, 'Оплачен', 1000.00),
+          (3, 'Запланирован', 160.00);
+  
+INSERT INTO order_products (product_id, order_id, amount)
+  VALUES (5, 1, 1), (4, 1, 1),
+        (1, 2, 2), (2, 2, 1), (3, 2, 1),
+        (4, 3, 10),
+        (1, 4, 3), (3, 4, 1);
+
+
+-- SELECTING TABLES
+--SELECT * FROM users;
+--SELECT * FROM products;
+--SELECT * FROM orders;
+--SELECT * FROM order_products;
+
+
+-- UPDATING VALUES
+UPDATE orders
+SET total_cost = total_cost + 9.50;
+
+UPDATE products
+SET title = 'Тетрадочка'
+WHERE title = 'Тетрадь';
+
+
+-- DELETING VALUES
+--DELETE FROM products
+--WHERE title = 'Курсач';
+--SELECT * FROM products;
+
+-- JOINING TABLES
+SELECT name, SUM(total_cost) FROM orders
+  JOIN users ON orders.user_id = users.id
+  GROUP BY name;
+  
+SELECT title, amount, total_cost, status FROM order_products
+  JOIN orders ON order_products.order_id = orders.id
+  JOIN products ON order_products.product_id = products.id;
+  
