@@ -1,0 +1,78 @@
+/*
+CREATE TABLE products (
+	product_id SERIAL PRIMARY KEY,
+	title VARCHAR(255),
+    price NUMERIC,
+    is_new BOOLEAN,
+    created_at TIMESTAMP
+);
+
+CREATE TYPE status_enum
+AS ENUM ('создан', 'оплачен', 'в пути', 'доставлен');
+
+CREATE TABLE orders (
+	title VARCHAR(255),
+	status status_enum,
+	contents VARCHAR(255)[]
+);
+
+CREATE TABLE serialization (
+	description XML,
+	config JSON
+);
+
+CREATE TYPE address_type AS (
+	city VARCHAR(128), 
+	street VARCHAR(256), 
+	house VARCHAR(8)
+);
+
+CREATE TABLE users (
+   id SERIAL PRIMARY KEY,
+   name VARCHAR(255),
+   address address_type
+);
+
+CREATE TABLE idk (
+   money_ MONEY,
+   binary_ BYTEA,
+   geometric_ POINT,
+   bit_ BIT(8),
+   uuid_ UUID
+);
+*/
+
+INSERT INTO products (title, price, is_new, created_at)
+	VALUES ('prod_one', 150, true, '2023-03-01 9:10:00'),
+			('prod_two', 230, true, '2023-02-20 0:00:00'),
+			('prod_three', 500, false, '2022-12-20 14:34:22');
+
+INSERT INTO orders (title, status, contents)
+	VALUES ('order1', 'создан', '{pen, pencil, box}'),
+			('order2', 'создан', '{cucumber, potato, banana}'),
+			('order3', 'оплачен', '{computer, mouse}'),
+			('order4', 'доставлен', '{memes}');
+
+INSERT INTO serialization (description, config)
+	VALUES (
+		'<title>BoolBoolator</title><lastLogin>15.04.2022</lastLogin>',
+		'{"OS": "Windows", "db_name": "postgres", "debug": "false"}'
+	),
+	(
+		'<title>BoolBoolator</title><lastLogin>19.03.2023</lastLogin>',
+		'{"OS": "Ubuntu", "db_name": "postgres", "debug": "true"}'
+	);
+
+INSERT INTO users (name, address)
+	VALUES ('Ivan', ROW('Lipetsk', 'Sovetskaya', '25A')),
+			('Kirill', ROW('Moskow', 'Tverskaya', '1'));
+
+INSERT INTO idk (money_, binary_, geometric_, bit_, uuid_)
+	VALUES ('100,57', E'\\xDEADBEEF', POINT(1, 2),
+		   B'10101010', 'f47ac10b-58cc-4372-a567-0e02b2c3d479');
+
+/*
+SELECT * FROM products WHERE price > 200;
+
+SELECT * FROM products WHERE is_new = true;
+*/

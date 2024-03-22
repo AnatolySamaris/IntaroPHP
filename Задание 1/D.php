@@ -52,5 +52,5 @@ $tester = new Tester($solution);
 
 $tester->test(
     tests_dir: $solution->TEST_PATH,
-    one_test: 7
+    //one_test: 7
 );
