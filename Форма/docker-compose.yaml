@@ -1,0 +1,40 @@
+version: '3'
+
+name: form-application
+
+services:
+  nginx:
+    container_name: form-nginx
+    build:
+      context: .
+      dockerfile: ./dockerfiles/nginx/Dockerfile
+    ports:
+      - "80:80"
+    networks:
+      - form-network
+    depends_on:
+      - php-fpm
+    volumes:
+      - ./:/var/www/hello.dev/
+
+  php-fpm:
+    container_name: form-php-fpm
+    build:
+      context: .
+      dockerfile: ./dockerfiles/php-fpm/Dockerfile
+    networks:
+      - form-network
+    volumes:
+      - ./:/var/www/hello.dev/
+
+  postgres:
+    container_name: form-postgres
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_PASSWORD: password
+    networks:
+      - form-network
+
+networks:
+  form-network:
+    driver: bridge

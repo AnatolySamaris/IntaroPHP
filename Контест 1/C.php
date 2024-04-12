@@ -29,7 +29,6 @@ class Solution
                 $m = $args[2];
             }
 
-            print_r($request);
             switch ($type) {
                 case 'S':
                     $str_len = strlen($str);
@@ -78,7 +77,6 @@ class Solution
                     }
                     break;
             }
-            echo $answer[count($answer)-1]."\n\n";
         }
 
         return $answer;

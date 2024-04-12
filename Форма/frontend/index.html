@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Форма обратной связи</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="icon" href="./clown.ico">
+</head>
+<body>
+    <script src="https://cdn.jsdelivr.net/npm/inputmask"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <div class="container">
+        <h2>Форма обратной связи</h2>
+        <form id="feedbackForm" method="post">
+            <div class="form-group">
+                <label for="surname">Фамилия*:</label>
+                <input type="text" class="form-control _req" name="surname" id="surname">
+            </div>
+            <div class="form-group">
+                <label for="name">Имя*:</label>
+                <input type="text" class="form-control _req" name="name" id="name">
+            </div>
+            <div class="form-group">
+                <label for="patronymic">Отчество:</label>
+                <input type="text" class="form-control" name="patronymic" id="patronymic">
+            </div>
+            <div class="form-group">
+                <label for="email">E-mail*:</label>
+                <input type="email" class="form-control _req _email" name="email" id="email">
+            </div>
+            <div class="form-group">
+                <label for="phone">Телефон*:</label>
+                <input type="tel" class="form-control _req" name="phone" id="phone" onInput="this.value = phoneFormat(this.value)">
+            </div>
+            <div class="form-group">
+                <label for="comment">Комментарий*:</label>
+                <textarea class="form-control _req" name="comment" id="comment"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Отправить</button>
+        </form>
+    </div>
+
+    <script src="script.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var phoneInput = document.getElementById('phone');
+            Inputmask({ mask: '+7 (999) 999-99-99' }).mask(phoneInput);
+        });        
+    </script>
+
+    
+    <script>
+        //$(document).ready(function() {
+        //    $('#feedbackForm').submit(function(event) {
+        //        event.preventDefault();
+        //        var formData = $(this).serialize();
+        //        $.ajax({
+        //            type: 'POST',
+        //            url: '../backend/submit_form.php',
+        //            data: formData,
+        //            success: function(response) {
+        //                $('#feedbackForm').replaceWith('<div id="successMessage">' + response + '</div>');
+        //            }
+        //        });
+        //    });
+        //});
+
+
+        $(document).ready(function() {
+            $('#feedbackForm').submit(function(event) {
+                event.preventDefault();
+        
+                // Сброс всех предыдущих стилей ошибки
+                $('.form-control').removeClass('is-invalid');
+        
+                // Получаем значения полей формы
+                var name = $('#name').val();
+                var email = $('#email').val();
+                var phone = $('#phone').val();
+                var comment = $('#comment').val();
+        
+                // Проверка на заполненность
+                if (name.trim() === '' || name.trim().length > 100) {
+                    $('#name').addClass('invalid-feedback');
+                }
+                if (email.trim() === '' || !validateEmail(email)) {
+                    $('#email').addClass('invalid-feedback');
+                }
+                if (phone.trim() === '' || !validatePhone(phone)) {
+                    $('#phone').addClass('invalid-feedback');
+                }
+                if (comment.trim() === '' || comment.length > 2000) {
+                    $('#comment').addClass('invalid-feedback');
+                }
+        
+                // Проверка на наличие ошибок
+                if ($('.invalid-feedback').length === 0) {
+                    var formData = $(this).serialize();
+                    $.ajax({
+                        type: 'POST',
+                        url: '../backend/submit_form.php',
+                        data: formData,
+                        success: function(response) {
+                            $('#feedbackForm').replaceWith('<div id="successMessage">' + response + '</div>');
+                        }
+                    });
+                }
+            });
+
+            function validateEmail(email) {
+                var re = /\S+@\S+\.\S+/;
+                return re.test(email);
+            }
+
+            function validatePhone(phone) {
+                var re = /^\+7 \d{3} \d{3} \d{2} \d{2}$/;
+                return re.test(phone);
+            }
+        });
+    </script>
+</body>
+</html>
