@@ -1,5 +1,11 @@
 "use strict"
 
+document.addEventListener("DOMContentLoaded", function() {
+    var phoneInput = document.getElementById('phone');
+    Inputmask({ mask: '+7 (999) 999-99-99' }).mask(phoneInput);
+});
+
+
 document.addEventListener("DOMContentLoaded", function () {
     const form = document.getElementById('feedbackForm');
     form.addEventListener('submit', formSend);
@@ -10,7 +16,24 @@ document.addEventListener("DOMContentLoaded", function () {
         let error = formValidate(form);
 
         let formData = new FormData(form);
+        
+        if (error === 0) {
+            $.ajax({
+                url: '/submit_form.php',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    alert("SUCCESS:" + response.value);
+                },
+                error: function (response) {
+                    alert("ERROR" + response);
+                }
+            });
+        }
 
+        /**
         if (error === 0) {
             let response = await fetch('../backend/submit_form.php', {
                 method: 'POST',
@@ -23,7 +46,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 alert("ERROR");
             }
         }
-    }
+    } */
 
     function formValidate(form) {
         let error = 0;
@@ -33,7 +56,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const input = formReq[index];
             formRemoveError(input);
 
-            if (input.classList.contains('_email')) {
+            if (input.id == 'email') {
                 if (!emailTest(input)) {
                     formAddError(input);
                     error++;
@@ -43,13 +66,13 @@ document.addEventListener("DOMContentLoaded", function () {
                     formAddError(input);
                     error++;
                 }
-            } else if (input.id == 'surname') {
+            } else if (input.id == 'name') {
                 if (!/[a-zA-Zа-яА-ЯёЁ]/i.test(input.value)) {
                     formAddError(input);
                     error++;
                 }
-            } else if (input.id == 'patronymic' && input.value != '') {
-                if (!/[a-zA-Zа-яА-ЯёЁ]/i.test(input.value)) {
+            } else if (input.id == 'patronymic') {
+                if (input.value != '' && !/[a-zA-Zа-яА-ЯёЁ]/i.test(input.value)) {
                     formAddError(input);
                     error++;
                 }
@@ -65,16 +88,14 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function formAddError(input) {
-        input.parentElement.classList.add('is-invalid');
         input.classList.add('is-invalid');
     }
 
     function formRemoveError(input) {
-        input.parentElement.classList.remove('is-invalid');
         input.classList.remove('is-invalid');
     }
 
     function emailTest(input) {
         return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,8})+$/.test(input.value);
     }
-});
+}});

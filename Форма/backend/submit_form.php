@@ -1,4 +1,5 @@
 <?php
+/***
 // Подключение к базе данных
 $host = 'postgres';
 $dbname = 'postgres';
@@ -8,11 +9,19 @@ $password = 'password';
 $db = new PDO("pgsql:host=$host;dbname=$dbname", $username, $password);
 
 // Получение данных из формы
+$surname = $_POST['surname'];
 $name = $_POST['name'];
+$patronymic = $_POST['patronymic'];
 $email = $_POST['email'];
 $phone = $_POST['phone'];
 $comment = $_POST['comment'];
+*/
 
+$value = getcwd();
+header('Content-Type: application/json');
+echo json_encode(['value' => $value]);
+
+/***
 // Проверка наличия заявки с таким email в течение последнего часа
 $existingAppQuery = $db->prepare("SELECT created_at FROM applications WHERE email = :email ORDER BY created_at DESC LIMIT 1");
 $existingAppQuery->execute(['email' => $email]);
@@ -37,3 +46,4 @@ if ($lastApp && strtotime($lastApp['created_at']) > strtotime('-1 hour')) {
     echo "Заявка успешно оформлена!";
 }
 
+*/
