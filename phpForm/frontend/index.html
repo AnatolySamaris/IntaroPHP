@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Формочка без докера ;/</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="./css/bootstrap.css">
+    <link rel="icon" href="./resources/favicon.ico">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="./js/jquery.js"></script>
+    <script src="./js/inputmask.js"></script>
+    <script src="./js/script.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h2>Заполните форму</h2>
+        <form id="feedbackForm" method="post">
+            <div class="form-group">
+                <label for="name">ФИО*:</label>
+                <input type="text" class="form-control" name="name" id="name" placeholder="Иванов Иван">
+            </div>
+            <div class="form-group">
+                <label for="email">E-mail*:</label>
+                <input type="email" class="form-control" name="email" id="email" placeholder="your@email.com">
+            </div>
+            <div class="form-group">
+                <label for="phone">Телефон*:</label>
+                <input type="tel" class="form-control" name="phone" id="phone" placeholder="+7 (000) 000-00-00">
+            </div>
+            <div class="form-group">
+                <label for="comment">Комментарий*:</label>
+                <textarea class="form-control" name="comment" id="comment" placeholder="Ваш комментарий"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Отправить</button>
+        </form>
+        <p id="message"></p>
+    </div>
+</body>
+</html>

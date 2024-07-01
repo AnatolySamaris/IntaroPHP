@@ -1,1 +1,0 @@
-Запустить проект: <br> `docker-compose up --build` 
