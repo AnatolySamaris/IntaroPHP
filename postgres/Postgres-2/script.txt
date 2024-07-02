@@ -1,4 +1,4 @@
-/*
+
 CREATE TABLE products (
 	product_id SERIAL PRIMARY KEY,
 	title VARCHAR(255),
@@ -40,7 +40,7 @@ CREATE TABLE idk (
    bit_ BIT(8),
    uuid_ UUID
 );
-*/
+
 
 INSERT INTO products (title, price, is_new, created_at)
 	VALUES ('prod_one', 150, true, '2023-03-01 9:10:00'),
@@ -71,8 +71,7 @@ INSERT INTO idk (money_, binary_, geometric_, bit_, uuid_)
 	VALUES ('100,57', E'\\xDEADBEEF', POINT(1, 2),
 		   B'10101010', 'f47ac10b-58cc-4372-a567-0e02b2c3d479');
 
-/*
+
 SELECT * FROM products WHERE price > 200;
 
 SELECT * FROM products WHERE is_new = true;
-*/

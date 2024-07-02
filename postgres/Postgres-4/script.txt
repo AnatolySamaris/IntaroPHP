@@ -1,0 +1,94 @@
+
+CREATE TABLE product (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    price NUMERIC(10, 2) NOT NULL,
+    amount INTEGER NOT NULL
+);
+
+
+INSERT INTO product (title, price, amount)
+SELECT
+    'prod' || g.id,           -- Создает строка вида 'prodN'
+    (RANDOM() * (1000 - 10) + 10)::NUMERIC(10, 2),  -- Случайная цена от 10.00 до 1000.00
+    (RANDOM() * (200 - 1) + 1)::INTEGER            -- Случайное количество от 1 до 200
+FROM generate_series(1, 10000) AS g(id);
+
+
+-- Страница товара
+EXPLAIN ANALYZE SELECT * FROM product
+WHERE id = 1024;
+
+-- Список товаров по умолчанию
+EXPLAIN ANALYZE SELECT * FROM product
+LIMIT 200;
+
+-- Список товаров, сортировка по цене
+EXPLAIN ANALYZE SELECT * FROM product
+ORDER BY price
+LIMIT 200;
+
+-- Список товаров, выбранный менеджером
+EXPLAIN ANALYZE SELECT * FROM product
+WHERE id in (5, 34, 86, 905, 7896, 5345, 2349, 17);
+
+-- Поиск товаров
+EXPLAIN ANALYZE SELECT * FROM product
+WHERE title LIKE 'prod5%'
+LIMIT 100;
+
+-- Поиск товаров, которые скоро закончатся
+EXPLAIN ANALYZE SELECT * FROM product
+WHERE amount < 20
+LIMIT 100;
+
+
+CREATE INDEX idx_btree_price ON product USING btree(price);
+
+
+-- Поиск товаров, которые скоро закончатся
+EXPLAIN ANALYZE SELECT * FROM product
+WHERE amount < 20
+LIMIT 100;
+
+-- Список товаров, сортировка по цене
+EXPLAIN ANALYZE SELECT * FROM product
+ORDER BY price
+LIMIT 200;
+
+CREATE INDEX idx_hash_title ON product USING hash(title);
+
+EXPLAIN ANALYZE SELECT * FROM product
+WHERE title LIKE 'prod5%'
+LIMIT 100;
+
+
+CREATE INDEX idx_partial_amount ON product(amount) WHERE amount > 100;
+
+-- Список товаров, сортировка по цене
+EXPLAIN ANALYZE SELECT * FROM product
+ORDER BY amount
+LIMIT 200;
+
+
+CREATE TABLE api_responses (
+    id SERIAL PRIMARY KEY,
+    response_data JSON
+);
+
+INSERT INTO api_responses (response_data) VALUES
+('{"status": "ok", "data": {"value": 123}}'),
+('{"status": "error", "error": "Server not found"}'),
+('{"status": "error", "error": "Timeout occurred"}'),
+('{"status": "ok", "data": {"value": 456}}');
+
+-- Включаем расширение, если еще не включено
+CREATE EXTENSION IF NOT EXISTS btree_gist;
+
+-- Создаем GIST индекс
+CREATE INDEX idx_gist_json ON api_responses USING GIST (response_data);
+
+EXPLAIN ANALYZE SELECT *
+FROM api_responses
+WHERE response_data ->> 'error' IS NOT NULL;
+
