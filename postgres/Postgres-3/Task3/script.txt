@@ -1,0 +1,133 @@
+CREATE TABLE customer (
+    id SERIAL PRIMARY KEY,
+    created_at TIMESTAMP NOT NULL,
+    first_name VARCHAR(50),
+    last_name VARCHAR(50),
+    phone VARCHAR(15),
+    email VARCHAR(100)
+);
+
+CREATE TABLE "order" (
+    id SERIAL PRIMARY KEY,
+    created_at TIMESTAMP NOT NULL,
+    customer_id INT REFERENCES customer(id),
+    manager_id INT NOT NULL,
+    status_id INT NOT NULL,
+    is_paid BOOLEAN,
+    total_sum NUMERIC(10, 2),
+    utm_source VARCHAR(100)
+);
+
+
+INSERT INTO customer (created_at, first_name, last_name, phone, email) VALUES
+('2022-01-01 10:00:00', 'John', 'Doe', '1234567890', 'john.doe@example.com'),
+('2022-01-02 11:00:00', 'Jane', 'Doe', '1234567891', 'jane.doe@example.com'),
+('2022-01-03 12:00:00', 'Alice', 'Smith', '1234567892', 'alice.smith@example.com'),
+('2022-01-04 13:00:00', 'Bob', 'Brown', '1234567893', 'bob.brown@example.com'),
+('2022-01-05 14:00:00', 'Charlie', 'Johnson', '1234567894', 'charlie.johnson@example.com'),
+('2022-01-06 15:00:00', 'David', 'Williams', '1234567895', 'david.williams@example.com'),
+('2022-01-07 16:00:00', 'Eve', 'Jones', '1234567896', 'eve.jones@example.com'),
+('2022-01-08 17:00:00', 'Frank', 'Miller', '1234567897', 'frank.miller@example.com'),
+('2022-01-09 18:00:00', 'Grace', 'Davis', '1234567898', 'grace.davis@example.com'),
+('2022-01-10 19:00:00', 'Hank', 'Garcia', '1234567899', 'hank.garcia@example.com'),
+('2022-01-11 20:00:00', 'Ivy', 'Martinez', '1234567800', 'ivy.martinez@example.com'),
+('2022-01-21 16:00:00', 'Steve', 'White', '1234567810', 'steve.white@example.com'),
+('2022-01-22 17:00:00', 'Tina', 'Harris', '1234567811', 'tina.harris@example.com'),
+('2022-01-23 18:00:00', 'Uma', 'Clark', '1234567812', 'uma.clark@example.com'),
+('2022-01-24 19:00:00', 'Vince', 'Lewis', '1234567813', 'vince.lewis@example.com'),
+('2022-01-25 20:00:00', 'Wendy', 'Walker', '1234567814', 'wendy.walker@example.com'),
+('2022-01-26 21:00:00', 'Xander', 'Hall', '1234567815', 'xander.hall@example.com'),
+('2022-01-27 22:00:00', 'Yara', 'Allen', '1234567816', 'yara.allen@example.com'),
+('2022-01-28 23:00:00', 'Zach', 'Young', '1234567817', 'zach.young@example.com'),
+('2022-01-29 10:00:00', 'Aaron', 'King', '1234567818', 'aaron.king@example.com'),
+('2022-01-30 11:00:00', 'Bella', 'Scott', '1234567819', 'bella.scott@example.com');
+
+
+INSERT INTO "order" (created_at, customer_id, manager_id, status_id, is_paid, total_sum, utm_source) VALUES
+('2022-02-01 12:00:00', 1, 1, 1, TRUE, 100.00, 'Google'),
+('2022-02-02 13:00:00', 2, 2, 2, FALSE, 200.00, 'Facebook'),
+('2022-02-03 14:00:00', 3, 3, 1, TRUE, 150.00, 'Instagram'),
+('2022-02-04 15:00:00', 4, 1, 3, FALSE, 250.00, 'Google'),
+('2022-02-05 16:00:00', 5, 2, 1, TRUE, 300.00, 'Facebook'),
+('2022-02-06 17:00:00', 6, 3, 1, TRUE, 350.00, 'Instagram'),
+('2022-02-07 18:00:00', 7, 1, 2, FALSE, 400.00, 'Google'),
+('2022-02-08 19:00:00', 8, 2, 1, TRUE, 450.00, 'Facebook'),
+('2022-02-09 20:00:00', 9, 3, 1, TRUE, 500.00, 'Instagram'),
+('2022-02-10 21:00:00', 10, 1, 3, FALSE, 550.00, 'Google'),
+('2022-02-11 22:00:00', 11, 2, 1, TRUE, 600.00, 'Facebook'),
+('2022-02-12 23:00:00', 12, 3, 1, TRUE, 650.00, 'Instagram'),
+('2022-02-13 12:00:00', 13, 1, 2, FALSE, 700.00, 'Google'),
+('2022-02-14 13:00:00', 14, 2, 1, TRUE, 750.00, 'Facebook'),
+('2022-02-15 14:00:00', 15, 3, 1, TRUE, 800.00, 'Instagram'),
+('2022-02-16 15:00:00', 16, 1, 3, FALSE, 850.00, 'Google'),
+('2022-02-17 16:00:00', 17, 2, 1, TRUE, 900.00, 'Facebook'),
+('2022-02-18 17:00:00', 18, 3, 1, TRUE, 950.00, 'Instagram');
+
+
+
+SELECT
+    customer_id,
+    AVG(EXTRACT(EPOCH FROM (lead(created_at) OVER (PARTITION BY customer_id ORDER BY created_at) - created_at))) / 3600 AS avg_time_between_orders
+FROM "order"
+GROUP BY customer_id;
+
+SELECT
+    customer_id,
+    COUNT(*) AS num_visits,
+    COUNT(*) AS num_orders
+FROM "order"
+GROUP BY customer_id;
+
+SELECT
+    utm_source,
+    COUNT(*) AS num_visits,
+    COUNT(*) AS num_orders,
+    COUNT(CASE WHEN is_paid THEN 1 END) AS num_paid_orders,
+    COUNT(CASE WHEN status_id = 1 THEN 1 END) AS num_completed_orders
+FROM "order"
+GROUP BY utm_source;
+
+
+WITH order_details AS (
+    SELECT
+        manager_id,
+        EXTRACT(EPOCH FROM (completed_at - created_at)) / 3600 AS completion_time,
+        status_id,
+        total_sum
+    FROM "order"
+    WHERE status_id = 1
+)
+SELECT
+    manager_id,
+    AVG(completion_time) AS avg_completion_time,
+    SUM(CASE WHEN status_id = 2 THEN 1 ELSE 0 END) / COUNT(*)::FLOAT AS cancel_rate,
+    SUM(total_sum) AS total_completed_sum,
+    AVG(total_sum) AS avg_order_value
+FROM order_details
+GROUP BY manager_id;
+
+
+
+WITH order_stats AS (
+    SELECT
+        manager_id,
+        COUNT(*) AS total_orders,
+        SUM(CASE WHEN status_id = 1 THEN 1 ELSE 0 END) AS completed_orders,
+        SUM(CASE WHEN status_id = 2 THEN 1 ELSE 0 END) AS canceled_orders,
+        AVG(EXTRACT(EPOCH FROM (completed_at - created_at)) / 3600) AS avg_completion_time
+    FROM "order"
+    GROUP BY manager_id
+),
+overall_stats AS (
+    SELECT
+        AVG(EXTRACT(EPOCH FROM (completed_at - created_at)) / 3600) AS overall_avg_completion_time,
+        SUM(CASE WHEN status_id = 1 THEN 1 ELSE 0 END) * 1.0 / COUNT(*) AS overall_completion_rate,
+        SUM(CASE WHEN status_id = 2 THEN 1 ELSE 0 END) * 1.0 / COUNT(*) AS overall_cancel_rate
+    FROM "order"
+)
+SELECT
+    os.manager_id,
+    (os.completed_orders * 1.0 / os.total_orders - ovr.all_completion_rate) +
+    (os.avg_completion_time - ovr.all_avg_completion_time) -
+    (os.canceled_orders * 1.0 / os.total_orders - ovr.all_cancel_rate) AS manager_rating
+FROM order_stats os, overall_stats ovr;

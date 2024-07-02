@@ -1,0 +1,62 @@
+
+CREATE TABLE order_history (
+    id SERIAL PRIMARY KEY,
+    order_id INTEGER NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    field_name VARCHAR(255) NOT NULL,
+    old_value VARCHAR(255),
+    new_value VARCHAR(255)
+);
+
+INSERT INTO order_history (order_id, field_name, old_value, new_value)
+VALUES 
+	(1, 'status_id', 'pending', 'completed'),
+	(2, 'manager_id', '123', '456'),
+	(3, 'total_sum', '100.00', '150.00'),
+	(4, 'status_id', 'new', 'shipped'),
+	(5, 'manager_id', '789', '555'),
+	(6, 'total_sum', '75.50', '80.00'),
+	(7, 'status_id', 'pending', 'cancelled'),
+	(8, 'manager_id', '222', '111'),
+	(9, 'total_sum', '200.00', '250.75'),
+	(10, 'status_id', 'shipped', 'delivered'),
+	(11, 'manager_id', '333', '444'),
+	(12, 'total_sum', '150.25', '175.50'),
+	(13, 'status_id', 'pending', 'processing'),
+	(14, 'manager_id', '777', '999'),
+	(15, 'total_sum', '300.00', '350.00'),
+	(16, 'status_id', 'processing', 'completed'),
+	(17, 'manager_id', '888', '777'),
+	(18, 'total_sum', '125.50', '130.25'),
+	(19, 'status_id', 'processing', 'shipped'),
+	(20, 'manager_id', '666', '555');
+
+
+
+WITH StatusChanges AS (
+    SELECT
+        order_id,
+        field_name,
+        old_value AS status,
+        created_at AS start_time,
+        COALESCE(
+            LEAD(created_at) OVER (PARTITION BY order_id ORDER BY created_at),
+            CURRENT_TIMESTAMP
+        ) AS end_time
+    FROM order_history
+    WHERE field_name = 'status_id'
+)
+
+SELECT
+    status,
+    AVG(EXTRACT(EPOCH FROM (end_time - start_time)) / 60) AS avg_duration_minutes
+FROM StatusChanges
+GROUP BY status;
+
+
+
+
+
+
+
+
