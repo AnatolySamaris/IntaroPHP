@@ -1,6 +1,12 @@
 <?php
 date_default_timezone_set('Europe/Moscow');
-function isAvailableToCreate($pdo, $data)
+
+/**
+ * Проверка по email, можно ли создать ещё запись.
+ * Если нет - возвращает [false, $Сколько_минут_ждать].
+ * Если да - возвращает [true, $текущее_время_плюс_полтора_часа].
+ */
+function isAvailableToCreate($pdo, $data)  : array
 {
     $select_query = "
     SELECT * 
@@ -36,6 +42,9 @@ function isAvailableToCreate($pdo, $data)
     }
 }
 
+/**
+ * Создаем заявку и записываем в бд. Возвращаем id новой заявки.
+ */
 function createApplication($pdo, $data) : string
 {
     $insert_query = "

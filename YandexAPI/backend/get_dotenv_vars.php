@@ -1,5 +1,10 @@
 <?php
 
+
+/**
+ * Считывание всех переменных из секретного .env файла,
+ * в данном случае - apikey яндекс геокодера.
+ */
 function get_dotenv_vars(string $dotenv_path) : void
 {
     if (file_exists($dotenv_path)) {

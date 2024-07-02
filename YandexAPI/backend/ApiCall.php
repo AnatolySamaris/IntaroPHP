@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Класс для удобной работы с API яндекс геокодера.
+ * Позволяет сделать правильный запрос методом call, 
+ * а также извлечь необходимые данные служебными методами.
+ */
 class ApiCall
 {
     function __construct()
@@ -8,6 +13,7 @@ class ApiCall
 
     function call(string $url, array $params, array $headers) : array
     {
+        // Строим параметризованный запрос
         $ch = curl_init($url . '?' . http_build_query($params));
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -30,6 +36,7 @@ class ApiCall
         }
     }
 
+    // Парсим ответ, доставая координаты всех полученных точек
     function get_all_coordinates(string $response) : array
     {
         $json = json_decode($response, true);
@@ -47,6 +54,7 @@ class ApiCall
         return $coordinates;
     }
 
+    // Парсим ответ, получая адреса подходящие под указанные в запросе координаты
     function get_all_addresses(string $response) : array
     {
         try {

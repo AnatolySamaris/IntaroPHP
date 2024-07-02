@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Считывание всех переменных из секретного .env файла, таких как
+ * пароль от бд, юзер, пароли от почты
+ */
 function get_dotenv_vars(string $dotenv_path) : void
 {
     if (file_exists($dotenv_path)) {

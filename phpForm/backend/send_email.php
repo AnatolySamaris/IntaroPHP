@@ -1,10 +1,14 @@
 <?php
 
 use PHPMailer\PHPMailer\PHPMailer;
-//use PHPMailer\PHPMailer\SMTP;
 
 require 'vendor/autoload.php';
 
+/**
+ * Функция отправки письма на почту менеджера с данными из формы при помощи PHPMailer.
+ * Если отправлено успешно - возвращает массив [true, 'success'], иначе
+ * массив [false, $Описание_ошибки]
+ */
 function send_email(string $application_title, string $from, string $to, array $data, array $auth_data) {    
     $body = "
     <h2>{$application_title}</h2>
@@ -19,7 +23,6 @@ function send_email(string $application_title, string $from, string $to, array $
     $mail->isSMTP();   
     $mail->CharSet = "UTF-8";
     $mail->SMTPAuth   = true;
-    //$mail->SMTPDebug = SMTP::DEBUG_SERVER;
     
     $mail->Host       = $auth_data['host'];
     $mail->Username   = $auth_data['username'];

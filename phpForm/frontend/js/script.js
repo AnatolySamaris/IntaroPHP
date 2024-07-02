@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 contentType: false,
                 statusCode: {
                     201: function (response) {
-                        time = response.data;
+                        time = response.data['date'];
                         showMessage('Заявка создана! С вами свяжутся после ' + time);
                     },
                     409: function (jqXHR) {

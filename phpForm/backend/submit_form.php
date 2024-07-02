@@ -5,6 +5,7 @@ require('send_email.php');
 require('get_dotenv_vars.php');
 
 
+// Считываем значения переменных из файла .env в $_ENV массив
 $env_path = '.env';
 get_dotenv_vars($env_path);
 
@@ -14,11 +15,13 @@ $dbname = $_ENV['DB_NAME'];
 $username = $_ENV['DB_USER'];
 $password = $_ENV['DB_PASSWORD'];
 
+// Эти данные будут отправлены ответом на запрос
 $status = 200;
 $message = "";
 $data = "";
 
 try {
+    // Устанавливаем соединение с бд
     $dsn = "pgsql:host=$host;dbname=$dbname";
     $pdo = new PDO($dsn, $username, $password);
 
@@ -34,12 +37,14 @@ try {
         "comment" => $comment
     );
 
+    // По email проверяем, можно ли создать запись
     $is_available_array = isAvailableToCreate($pdo, $data);
 
     if ($is_available_array[0]) {
         
         $created_id = createApplication($pdo, $data);
 
+        // Данные, необходимые для отправки письма
         $from_email = "tolik09102003@gmail.com";
         $to_email = "anatolysamaris@gmail.com";
         $title = "Заявка №". $created_id;
@@ -69,7 +74,7 @@ try {
     $message = $e->getMessage();
 }
 
-
+// Формируем ответ клиенту
 header('Content-Type: application/json');
 http_response_code($status);
 echo json_encode(['message' => $message, 'data' => $data]);
