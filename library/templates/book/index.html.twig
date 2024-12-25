@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Личная библиотека | Главная{% endblock %}
+
+{% block body %}
+
+{% if app.user %}
+    <button>
+        <a href="{{ path('app_book_add') }}">Добавить книгу</a>
+    </button>
+{% endif %}
+
+<div style="display: flex; flex-wrap: wrap;">
+    {% for book in books %}
+        <div style="border: 1px solid black; padding: 10px; margin: 10px; width: 20%;">
+            <!--<img src="{{ book.cover }}" alt="Обложка" style="width: 100%;">-->
+            <img src="{{ asset('uploads/photos/' ~ book.cover) }}" style="max-width: 200px" />
+            <h3>{{ book.title }}</h3>
+            <p>Автор: {{ book.author }}</p>
+            <p>Дата прочтения: {{ book.readAt }}</p>
+            {% if book.uploadable %}
+                <a href="#" style="margin-right: 10px;">Скачать</a>
+            {% endif %}
+            {% if app.user %}
+                <a href="{{ path('app_book_edit', { id: book.id }) }}" style="margin-right: 10px;">Редактировать</a>
+                <a href="{{ path('app_book_delete', { id: book.id }) }}" style="color: red;">Удалить</a>
+            {% else %}
+                <a href="{{ path('app_book_show', { id: book.id }) }}" style="margin-right: 10px;">Смотреть</a>
+            {% endif %}
+        </div>
+    {% endfor %}
+</div>
+
+
+{% endblock %}
